@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="cn.zju.dao.mapper.GroupMapper">
+ 
+ 
+    <select id="checkGroup" parameterType="cn.zju.dao.po.Group" resultType="java.lang.String" >
+        SELECT groupname FROM groups WHERE groupname=#{groupname} AND invitecode=#{invitecode}
+    </select>
+    
+    <select id="findGroup" parameterType="java.lang.String" resultType="java.lang.Integer" >
+        SELECT groups.id FROM groups WHERE groupname=#{groupname}
+    </select>
+    
+    <select id="getGroupId" parameterType="java.lang.String" resultType="java.lang.Integer" >
+        SELECT groups.id FROM groups WHERE groupname=#{groupname}
+    </select>
+    
+    <select id="getGroupName" parameterType="java.lang.Integer" resultType="java.lang.String" >
+        SELECT groups.groupname FROM groups WHERE id=#{groupid}
+    </select>
+    
+    <select id="getArceusById" parameterType="java.lang.Integer" resultType="java.lang.String" >
+        SELECT groups.arceus FROM groups WHERE id=#{groupid}
+    </select>
+ 
+    <insert id="createGroup" parameterType="cn.zju.dao.po.Group" >
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO groups(groupname,hasmembernum,arceus,limitmembernum,invitecode,usedcapa,totalcapa)
+                    VALUES(#{groupname},1,#{arceus},10,#{invitecode},0,102400)
+    </insert>
+    
+    <!-- 分页查找所有和搜索文字匹配的群组  -->
+    <select id="getAllGroups" parameterType="cn.zju.action.SearchGroupAction" resultType="cn.zju.dao.po.Group" >
+       SELECT * FROM groups WHERE groupname LIKE '%${searchcontent}%' LIMIT #{startindex},#{pagesize}
+    </select>
+    
+    <!-- 分页查找所有群组  -->
+    <select id="searchAllGroups" parameterType="cn.zju.action.SearchAllGroupAction" resultType="cn.zju.dao.po.Group" >
+        SELECT * FROM groups LIMIT #{startindex},#{pagesize}
+    </select>
+    
+     <!-- 分页查找某个用户所有的群组  -->
+    <select id="getUserGroups" parameterType="cn.zju.action.SearchUserGroupAction" resultType="cn.zju.dao.po.Group" >
+       SELECT * FROM groups,relation,user WHERE relation.userid=#{userid} and groups.id=relation.groupid and relation.userid=user.id LIMIT #{startindex},#{pagesize}
+    </select>
+    
+    <!-- 统计一个用户一共多少群组 -->
+    <select id="countUserGroups" parameterType="cn.zju.action.SearchUserGroupAction" resultType="int">
+       SELECT COUNT(id) as totalrecord FROM relation WHERE userid=#{userid}
+    </select>
+    
+    <!-- 和搜索内容匹配的所有的群组总数 -->
+    <select id="countGroups" parameterType="cn.zju.action.SearchGroupAction" resultType="int">
+       SELECT COUNT(id) as totalrecord FROM groups WHERE  groupname LIKE '%${searchcontent}%'
+    </select>
+    
+    <!-- 和搜索内容匹配的所有的群组总数 -->
+    <select id="countAllGroups" parameterType="cn.zju.action.SearchAllGroupAction" resultType="int">
+        SELECT COUNT(id) as totalrecord FROM groups 
+    </select>
+    
+    
+    <!-- 不是很明白为什么用value  -->
+    <select id="hasMemberNum" parameterType="java.lang.String" resultType="int">
+        SELECT hasmembernum FROM groups WHERE groupname=#{value}
+    </select>
+    
+    <select id="limitMemberNum" parameterType="java.lang.String" resultType="int">
+        SELECT limitmembernum FROM groups WHERE groupname=#{value}
+    </select>
+    
+    <!-- 根据群组id更新小组内成员数（－1）成员离开 -->
+    <update id="minusHasMemberNum" parameterType="java.lang.String">
+        UPDATE groups SET hasMemberNum=(hasMemberNum-1) WHERE groupname=#{groupname}
+    </update>
+    
+    <!-- 根据群组id更新小组内成员数（＋1） 成员加入-->
+    <update id="plusHasMemberNum" parameterType="java.lang.String">
+        UPDATE groups SET hasMemberNum=(hasMemberNum+1) WHERE groupname=#{groupname}
+    </update>
+    
+    <!-- 根据群组id删除group记录 -->
+    <delete id="deleteGroupById" parameterType="int">
+        DELETE FROM groups WHERE id=#{groupid}
+    </delete>
+    
+    <!-- 查找对应的用户可使用的最大空间  -->
+    <select id="totalCapa" parameterType="java.lang.String" resultType="int">
+        SELECT groups.totalcapa FROM groups WHERE groupname=#{groupname}
+    </select>
+    
+    <!-- 查找对应的用户已使用的空间  -->
+    <select id="usedCapa" parameterType="java.lang.String" resultType="int">
+        SELECT groups.usedcapa FROM groups WHERE groupname=#{groupname}
+    </select>
+    
+    <!-- 查找对应的用户已使用的空间  -->
+    <select id="getUsedCapaByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT usedcapa FROM groups WHERE groupname=#{groupname}
+    </select>
+    
+    <!-- 根据用户名更新已使用的文件容量 -->
+    <update id="plusUsedCapa" parameterType="cn.zju.action.NewUploadAction">
+        UPDATE groups SET usedcapa=(usedcapa+#{size}) WHERE groupname=#{groupname}
+    </update>
+    <update id="minusUsedCapa" parameterType="cn.zju.action.NewDeleteFileAction">
+        UPDATE groups SET usedcapa=(usedcapa-#{size}) WHERE groupname=#{groupname}
+    </update>
+    
+    <!-- 分页查找群组中所有成员的信息  -->
+    <select id="getGroupAllUsers" parameterType="cn.zju.action.SearchGroupUserAction" resultType="cn.zju.dao.po.User" >
+        SELECT * FROM user WHERE user.id IN (SELECT relation.userid FROM relation WHERE relation.groupid=#{groupid})
+    </select>
+ </mapper>
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 

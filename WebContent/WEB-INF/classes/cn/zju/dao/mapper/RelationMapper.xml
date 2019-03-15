@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+     
+ <mapper namespace="cn.zju.dao.mapper.RelationMapper">
+ 
+ 
+    <select id="checkRelation" parameterType="cn.zju.dao.po.Relation" resultType="java.lang.Integer" >
+        SELECT relation.id FROM relation WHERE userid=#{userid} AND groupid=#{groupid}
+    </select>
+    
+    <select id="findRelation" parameterType="cn.zju.dao.po.Relation" resultType="java.lang.Integer" >
+        SELECT relation.id FROM relation WHERE userid=#{userid} AND groupid=#{groupid}
+    </select>
+ 
+    <insert id="insertRelation" parameterType="cn.zju.dao.po.Relation" >
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO relation(groupid,userid)
+            VALUES(#{groupid},#{userid})
+    </insert>
+    
+    <!-- 根据文件id删除relation记录 -->
+    <delete id="deleteRelationById" parameterType="int" >
+        DELETE FROM relation WHERE id=#{value}
+    </delete>
+    
+    <!-- 根据群组id删除relation记录 -->
+    <delete id="deleteRelationByGroupId" parameterType="int" >
+        DELETE FROM relation WHERE groupid=#{value}
+    </delete>
+    
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

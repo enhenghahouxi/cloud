@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+    <!-- action中使用的service将由spring自动按类型注入 -->
+    <constant name="struts.objectFactory.spring.autoWire" value="type"></constant>
+    <constant name="struts.devMode" value="true"></constant>
+    <constant name="struts.multipart.maxSize" value="10000000000000"></constant>
+    
+    <package name="default" namespace="/" extends="struts-default">
+        
+        <action name="requestin" class="cn.zju.action.LoginAction" method="execute">
+            <result name="success">login.jsp</result>
+        </action>
+        
+        <!--请求转到其他页面的action，jsp进行转换之前检查相关的函数功能是否正常（execute）／提前准备相关数据 -->
+        <action name="adminrequestin" class="cn.zju.action.AdminLoginAction" method="execute">
+            <result name="success">/WEB-INF/jsp/adminlogin.jsp</result>
+        </action>
+        
+        <action name="requestup" class="cn.zju.action.LogupAction" method="execute">
+            <result name="success">/WEB-INF/jsp/logup.jsp</result>
+        </action>
+        
+        <action name="requestjoingroup" class="cn.zju.action.JoinGroupAction" method="execute">
+            <result name="success">/WEB-INF/jsp/joingroup.jsp</result>
+            <result name="error">groupwrongmessage.jsp</result>
+        </action>
+        
+        <action name="grouprequestup" class="cn.zju.action.CreateGroupAction" method="execute">
+            <result name="success">/WEB-INF/jsp/creategroup.jsp</result>
+        </action>
+        
+        <action name="requestout" class="cn.zju.action.LogoutAction" method="execute">
+            <result name="success">/login.jsp</result>
+        </action>
+        
+        <action name="requestsearchgroup" class="cn.zju.action.JoinGroupAction" method="execute">
+            <result name="success">/searchgroup.jsp</result>
+        </action>
+        
+        
+        <action name="autologin" class="cn.zju.action.AutoLoginAction" method="autoLogin">
+            <result type="chain" name="success">searchUserfile</result>
+            <result type="redirect" name="input">${pageContext.request.contextPath}/requestin.action</result>
+        </action>
+        
+        
+        <!--关于文件的相关搜索操作，搜索成功转到显示结果的页面-->
+        <action name="searchUserfile" class="cn.zju.action.SearchUserFileAction" method="execute">
+            <result name="success">/WEB-INF/jsp/userhome.jsp</result>
+            <result name="input">/index.jsp</result>
+        </action>
+        
+        
+        <action name="searchGroupfile" class="cn.zju.action.SearchGroupFileAction" method="execute">
+            <result name="success">/WEB-INF/jsp/mygrouparea.jsp</result>
+            <result name="input">/index.jsp</result>
+        </action>
+        
+        <action name="searchfile" class="cn.zju.action.SearchFileAction" method="execute">
+            <result name="success">/WEB-INF/jsp/showsearchfiles.jsp</result>
+            <result name="error">/searchfile.jsp</result>
+            <result name="input">/login.jsp</result>
+        </action>
+        
+        <action name="listfiles" class="cn.zju.action.SearchFileAction" method="listFiles">
+            <result name="success">/WEB-INF/jsp/showsearchfiles.jsp</result>
+            <result name="input">/login.jsp</result>
+        </action>
+
+        
+        <!--关于群组的相关搜索操作，搜索成功转到显示结果的页面-->
+        <action name="searchUsergroup" class="cn.zju.action.SearchUserGroupAction" method="execute">
+            <result name="success">/grouphome.jsp</result>
+            <result name="input">/login.jsp</result>
+        </action>
+        
+        <action name="searchgroup" class="cn.zju.action.SearchGroupAction" method="execute">
+            <result name="success">/WEB-INF/jsp/showsearchgroups.jsp</result>
+            <result name="error">/searchgroup.jsp</result>
+            <result name="input">/login.jsp</result>
+        </action>
+        
+        <action name="listgroups" class="cn.zju.action.SearchGroupAction" method="listGroups">
+            <result name="success">/WEB-INF/jsp/showsearchgroups.jsp</result>
+            <result name="input">/login.jsp</result>
+        </action>
+        
+        
+        <!--关于 用户／群组 的 创建，加入，注销／退出  等操作的action-->
+        <action name="logup" class="cn.zju.action.LogupAction" method="logup">
+            <result name="success">usercreatesuccessmessage.jsp</result>
+            <result name="error">/WEB-INF/jsp/logup.jsp</result>
+            <result name="input">/WEB-INF/jsp/logup.jsp</result>
+        </action>
+        
+        <action name="creategroup" class="cn.zju.action.CreateGroupAction" method="creategroup">
+            <result name="success">groupcreatesuccessmessage.jsp</result>
+            <result name="error">/WEB-INF/jsp/creategroup.jsp</result>
+            <result name="input">/WEB-INF/jsp/creategroup.jsp</result>
+        </action>
+        
+        <action name="joingroup" class="cn.zju.action.JoinGroupAction" method="joingroup">
+            <result name="success">groupjoinsuccessmessage.jsp</result>
+            <result name="error">/WEB-INF/jsp/joingroup.jsp</result>
+            <result name="input">index.jsp</result>
+        </action>
+        
+        <action name="quitgroup" class="cn.zju.action.QuitGroupAction" method="quitGroup">
+            <result type="chain" name="success">searchUsergroup</result>
+            <result name="error">/groupwrongmessage.jsp</result>
+        </action>
+        
+        <action name="dismissgroup" class="cn.zju.action.DismissGroupAction" method="dismissGroup">
+            <result type="chain" name="success">searchUsergroup</result>
+            <result name="error">/groupwrongmessage.jsp</result>
+        </action>
+  
+        <action name="login" class="cn.zju.action.LoginAction" method="login">
+            <result type="chain" name="success">searchUserfile</result>
+            <result name="error">login.jsp</result>
+            <result name="input">login.jsp</result>
+        </action>
+        
+        <action name="adminlogin" class="cn.zju.action.AdminLoginAction" method="login">
+            <result name="success">/WEB-INF/jsp/adminhome.jsp</result>
+            <result name="error">/message.jsp</result>
+            <result name="input">/WEB-INF/jsp/adminlogin.jsp</result>
+        </action>
+        
+        <action name="grouphome" class="cn.zju.action.SearchUserGroupAction" method="execute">
+           <result name="success">grouphome.jsp</result>
+           <result name="input">/login.jsp</result>
+        </action>
+       
+       <action name="entermygroup" class="cn.zju.action.SearchGroupFileAction" method="execute">
+           <result name="success">/WEB-INF/jsp/mygrouparea.jsp</result>
+           <result name="input">/login.jsp</result>
+       </action>
+       
+       <action name="enteruserhome" class="cn.zju.action.SearchUserFileAction" method="execute">
+           <result name="success">/WEB-INF/jsp/userarea.jsp</result>
+           <result name="input">/login.jsp</result>
+       </action>
+       
+       <action name="entergrouphome" class="cn.zju.action.SearchGroupFileAction" method="execute">
+           <result name="success">/WEB-INF/jsp/grouparea.jsp</result>
+           <result name="input">/login.jsp</result>
+       </action>
+       
+       <action name="searchgroupuser" class="cn.zju.action.SearchGroupUserAction" method="execute">
+           <result name="success">/WEB-INF/jsp/showgroupusers.jsp</result>
+           <result name="input">/login.jsp</result>
+       </action>
+       
+        <!--对文件相关的操作action-->
+        <action name="download" class="cn.zju.action.DownloadAction" method="download">
+            <result name="success">/message.jsp</result>
+            <result name="input">/message.jsp</result>
+        </action>
+        
+        <action name="upload" class="cn.zju.action.UploadAction" method="upload">
+            <result type="chain" name="success">searchUserfile</result>
+            <result name="error">/message.jsp</result>
+        </action>
+        
+        <action name="newupload" class="cn.zju.action.NewUploadAction" method="upload">
+            <result type="chain" name="success">searchGroupfile</result>
+            <result name="error">/groupwrongmessage.jsp</result>
+        </action>
+        
+        <action name="userchangefilestatus" class="cn.zju.action.ChangeFileStatusAction" method="changeFileStatus">
+            <result type="chain" name="success">searchUserfile</result>
+            <result name="input">/message.jsp</result>
+        </action>
+        <action name="groupchangefilestatus" class="cn.zju.action.ChangeFileStatusAction" method="changeFileStatus">
+            <result type="chain" name="success">searchGroupfile</result>
+            <result name="input">/groupwrongmessage.jsp</result>
+        </action>
+        
+        <action name="userdeletefile" class="cn.zju.action.DeleteFileAction" method="deleteFile">
+            <result type="chain" name="success">searchUserfile</result>
+            <result name="error">/message.jsp</result>
+        </action>
+        
+        <action name="groupdeletefile" class="cn.zju.action.NewDeleteFileAction" method="deleteFile">
+            <result type="chain" name="success">searchGroupfile</result>
+            <result name="error">/groupwrongmessage.jsp</result>
+        </action>
+        
+        
+        <!--其他action-->
+        <action name="shutdown" class="cn.zju.action.ShutDown">
+            <result name="success">index.jsp</result>
+        </action>
+        
+        <action name="sendsms" class="cn.zju.action.Sendsms" method="sendsms">
+            <result name="error">/WEB-INF/jsp/logup.jsp</result>
+            <result name="input">/usercreatewrongmessage.jsp</result>
+        </action>
+        
+        <action name="checkphone" class="cn.zju.action.Check" method="checkphone">
+            <result name="error">/WEB-INF/jsp/logup.jsp</result>
+            <result name="input">/usercreatewrongmessage.jsp</result>
+        </action>
+        
+        <action name="adminhome" class="cn.zju.action.AdminLoginAction" method="execute">
+            <result name="success">/WEB-INF/jsp/adminhome.jsp</result>
+        </action>
+        
+        <action name="adminusers" class="cn.zju.action.SearchUserAction" method="execute">
+            <result name="success">/WEB-INF/jsp/adminusers.jsp</result>
+            <result name="error">/message.jsp</result>
+        </action>
+        
+        <action name="admingroups" class="cn.zju.action.SearchAllGroupAction" method="execute">
+            <result name="success">/WEB-INF/jsp/admingroups.jsp</result>
+            <result name="error">/message.jsp</result>
+        </action>
+        
+        <action name="adminfiles" class="cn.zju.action.SearchFileAction" method="execute">
+            <result name="success">/WEB-INF/jsp/adminfiles.jsp</result>
+            <result name="error">/message.jsp</result>
+        </action>
+        
+        
+    </package>
+</struts>
+    
+    
+    

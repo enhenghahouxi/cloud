@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="cn.zju.dao.mapper.UserMapper" >
+ 
+     <!-- 查看用户名和密码是否匹配 -->
+     <select id="checkUser" parameterType="cn.zju.dao.po.User" resultType="java.lang.String" >
+        SELECT user.username FROM user WHERE username=#{username} AND password=#{password}
+     </select>
+     
+     <!-- 查看是否存在是该用户名的用户 -->
+     <select id="findUser" parameterType="java.lang.String" resultType="java.lang.Integer" >
+        SELECT user.id FROM user WHERE username=#{username}
+     </select>
+     
+     <!-- 查看是否存在该手机的用户 -->
+     <select id="findPhone" parameterType="java.lang.String" resultType="java.lang.Integer" >
+         SELECT user.id FROM user WHERE phone=#{phone}
+     </select>
+     
+      <!-- 根据用户名获得用户id  -->
+     <select id="getUserIdByname" parameterType="java.lang.String" resultType="java.lang.Integer" >
+         SELECT user.id FROM user WHERE username=#{username}
+     </select>
+     
+      <!-- 查找对应的用户是否为vip  -->
+     <select id="isVip" parameterType="java.lang.String" resultType="int">
+        SELECT isvip FROM user WHERE username=#{username}
+     </select>
+     
+      <!-- 查找对应的用户可使用的最大空间  -->
+     <select id="totalCapa" parameterType="java.lang.String" resultType="int">
+         SELECT user.totalcapa FROM user WHERE username=#{username}
+     </select>
+     
+      <!-- 查找对应的用户已使用的空间  -->
+     <select id="usedCapa" parameterType="java.lang.String" resultType="int">
+         SELECT user.usedcapa FROM user WHERE username=#{username}
+     </select>
+     
+     <!-- 查找对应的用户已使用的空间  -->
+     <select id="getUsedCapaByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+         SELECT usedcapa FROM user WHERE username=#{username}
+     </select>
+     
+      <!-- 分页查找所有用户  -->
+      <select id="getAllUsers" parameterType="cn.zju.action.SearchUserAction" resultType="cn.zju.dao.po.User" >
+          SELECT * FROM user LIMIT #{startindex},#{pagesize}
+      </select>
+      
+      <!-- 所有的用户总数 -->
+      <select id="countUsers" parameterType="cn.zju.action.SearchUserAction" resultType="int">
+          SELECT COUNT(id) totalrecord FROM user
+      </select>
+      
+      <!-- 把创建的用户信息上传到数据库  -->
+     <insert id="createUser" parameterType="cn.zju.dao.po.User" >
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey> 
+        INSERT INTO user(username,password,isvip,totalcapa,usedcapa,phone) VALUES(#{username},#{password},#{isvip},102400,0,#{phone})
+     </insert>
+     
+     <!-- 根据用户名更新已使用的文件容量 -->
+     <update id="plusUsedCapa" parameterType="cn.zju.action.UploadAction">
+         UPDATE user SET usedcapa=(usedcapa+#{size}) WHERE username=#{username}
+     </update>
+     <update id="minusUsedCapa" parameterType="cn.zju.action.DeleteFileAction">
+         UPDATE user SET usedcapa=(usedcapa-#{size}) WHERE username=#{username}
+     </update>
+     
+ </mapper>
